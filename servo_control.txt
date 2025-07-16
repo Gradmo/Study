@@ -1,0 +1,38 @@
+#include <Servo.h>
+
+Servo myServo;  // Obiekt serwomechanizmu
+const int trigPin = 9;  // Pin wyzwalający czujnika HC-SR04
+const int echoPin = 10;  // Pin odbiorczy czujnika HC-SR04
+
+void setup() {
+  myServo.attach(6);  // Podłączenie serwa do pinu 6
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600);  // Inicjalizacja komunikacji szeregowej
+}
+
+void loop() {
+  long duration;
+  int distance;
+
+  // Pomiar odległości
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;  // Obliczenie odległości w cm
+
+  // Logika sterowania serwem
+  if (distance < 20) {
+    myServo.write(90);  // Obrót serwa do 90 stopni
+    Serial.println("Obiekt blisko! Serwo na 90 stopni.");
+  } else {
+    myServo.write(0);  // Serwo w pozycji początkowej
+    Serial.println("Brak obiektu, serwo na 0 stopni.");
+  }
+
+  delay(100);  // Odstęp czasowy
+}
